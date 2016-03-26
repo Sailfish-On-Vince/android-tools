@@ -1,8 +1,8 @@
-%global date 20160321
-%global git_commit 922e151ba2d8
+%global date 20160327
+%global git_commit 3761365735de
 
 %global packdname core-%{git_commit}
-%global extras_git_commit ea4a5a4
+%global extras_git_commit 7f5999a
 %global extras_packdname extras-%{extras_git_commit}
 
 %global _hardened_build 1
@@ -38,6 +38,7 @@ BuildRequires: libselinux-devel
 BuildRequires: f2fs-tools-devel
 BuildRequires: gtest-devel
 BuildRequires: systemd
+BuildRequires: ruby
 
 Provides:      adb
 Provides:      fastboot
@@ -99,7 +100,10 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
-* Wed Mar 26 2016 Ivan Afonichev <ivan.afonichev@gmail.com> - 20160321git922e151ba2d8-1
+* Sun Mar 27 2016 Ivan Afonichev <ivan.afonichev@gmail.com> - 20160327git3761365735de-1
+- Update to upstream git commit 3761365735de
+
+* Sat Mar 26 2016 Ivan Afonichev <ivan.afonichev@gmail.com> - 20160321git922e151ba2d8-1
 - Update to upstream git commit 922e151ba2d8
 - Resolves: rhbz 1278769 1318099 Migrate to ruby generate_build. Support new versions 
 

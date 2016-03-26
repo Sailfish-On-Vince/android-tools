@@ -98,10 +98,14 @@ basefiles = %w(
 libbase = compile(expand('base', basefiles), '-DADB_HOST=1 -D_GNU_SOURCE -Ibase/include -Iinclude')
 
 logfiles = %w(
-  logd_write.c
+  logger_write.c
+  config_write.c
+  logger_lock.c
+  logger_name.c
   log_event_list.c
   log_event_write.c
   fake_log_device.c
+  fake_writer.c
 )
 liblog = compile(expand('liblog', logfiles), '-DLIBLOG_LOG_TAG=1005 -DFAKE_LOG_DEVICE=1 -D_GNU_SOURCE -Ilog/include -Iinclude')
 
