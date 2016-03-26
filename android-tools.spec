@@ -1,15 +1,15 @@
-%global date 20141219
-%global git_commit 8393e50
+%global date 20160321
+%global git_commit 922e151ba2d8
 
 %global packdname core-%{git_commit}
-%global extras_git_commit 1e7d4f3
+%global extras_git_commit ea4a5a4
 %global extras_packdname extras-%{extras_git_commit}
 
 %global _hardened_build 1
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       5%{?dist}
+Release:       1%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
@@ -25,14 +25,10 @@ URL:           http://developer.android.com/guide/developing/tools/
 
 Source0:       %{packdname}.tar.xz
 Source1:       %{extras_packdname}.tar.xz
-Source2:       core-Makefile
-Source3:       adb-Makefile
-Source4:       fastboot-Makefile
+Source2:       generate_build.rb
 Source5:       51-android.rules
 Source6:       adb.service
-# None of the code *we* compile uses anything from selinux/android.h, but 
-# other code may, so not upstreaming these patches
-Patch1:        0001-Remove-android-selinux-header.patch
+Patch1:        0001-Add-string-h.patch
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
@@ -40,6 +36,7 @@ BuildRequires: zlib-devel
 BuildRequires: openssl-devel
 BuildRequires: libselinux-devel
 BuildRequires: f2fs-tools-devel
+BuildRequires: gtest-devel
 BuildRequires: systemd
 
 Provides:      adb
@@ -67,20 +64,18 @@ setup between the host and the target phone as adb.
 
 %prep
 %setup -q -b 1 -n extras
-%patch1 -p1
 %setup -q -b 0 -n %{packdname}
-cp -p %{SOURCE2} Makefile
-cp -p %{SOURCE3} adb/Makefile
-cp -p %{SOURCE4} fastboot/Makefile
+%patch1 -p1
 cp -p %{SOURCE5} 51-android.rules
 
 %build
-make %{?_smp_mflags}
+ruby %{SOURCE2} | tee build.sh
+PKGVER=%{git_commit} sh -xe build.sh
 
 %install
 install -d -m 0755 ${RPM_BUILD_ROOT}%{_bindir}
 install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
-make install DESTDIR=$RPM_BUILD_ROOT BINDIR=%{_bindir}
+install -m 0755 -t ${RPM_BUILD_ROOT}%{_bindir} adb/adb fastboot/fastboot 
 install -p -D -m 0644 %{SOURCE6} \
     %{buildroot}%{_unitdir}/adb.service
 
@@ -104,6 +99,10 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Wed Mar 26 2016 Ivan Afonichev <ivan.afonichev@gmail.com> - 20160321git922e151ba2d8-1
+- Update to upstream git commit 922e151ba2d8
+- Resolves: rhbz 1278769 1318099 Migrate to ruby generate_build. Support new versions 
+
 * Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 20141219git8393e50-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
