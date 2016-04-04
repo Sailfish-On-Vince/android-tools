@@ -71,7 +71,7 @@ cp -p %{SOURCE5} 51-android.rules
 
 %build
 ruby %{SOURCE2} | tee build.sh
-PKGVER=%{git_commit} sh -xe build.sh
+PKGVER=%{git_commit} CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" sh -xe build.sh
 
 %install
 install -d -m 0755 ${RPM_BUILD_ROOT}%{_bindir}
@@ -108,6 +108,9 @@ install -p -D -m 0644 %{SOURCE6} \
 * Sun Apr 08 2016 Bastien Nocera <hadess@hadess.net> - 20160327git3761365735de-2
 - Add missing BuildRequires for Ruby script to run
 - Compile and build img2simg and simg2img
+
+* Mon Apr  4 2016 Ville Skyttä <ville.skytta@iki.fi> - 20160327git3761365735de-2
+- Build with %%{optflags}
 
 * Sun Mar 27 2016 Ivan Afonichev <ivan.afonichev@gmail.com> - 20160327git3761365735de-1
 - Update to upstream git commit 3761365735de
