@@ -76,7 +76,7 @@ PKGVER=%{git_commit} sh -xe build.sh
 %install
 install -d -m 0755 ${RPM_BUILD_ROOT}%{_bindir}
 install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
-install -m 0755 -t ${RPM_BUILD_ROOT}%{_bindir} adb/adb fastboot/fastboot 
+install -m 0755 -t ${RPM_BUILD_ROOT}%{_bindir} adb/adb fastboot/fastboot libsparse/simg2img libsparse/img2simg
 install -p -D -m 0644 %{SOURCE6} \
     %{buildroot}%{_unitdir}/adb.service
 
@@ -95,6 +95,8 @@ install -p -D -m 0644 %{SOURCE6} \
 %attr(0755,root,root) %dir %{_sharedstatedir}/adb
 #ASL2.0
 %{_bindir}/adb
+%{_bindir}/simg2img
+%{_bindir}/img2simg
 #ASL2.0 and BSD.
 %{_bindir}/fastboot
 
@@ -102,6 +104,7 @@ install -p -D -m 0644 %{SOURCE6} \
 %changelog
 * Sun Apr 08 2016 Bastien Nocera <hadess@hadess.net> - 20160327git3761365735de-2
 - Add missing BuildRequires for Ruby script to run
+- Compile and build img2simg and simg2img
 
 * Sun Mar 27 2016 Ivan Afonichev <ivan.afonichev@gmail.com> - 20160327git3761365735de-1
 - Update to upstream git commit 3761365735de

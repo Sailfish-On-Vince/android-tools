@@ -178,3 +178,14 @@ libext4 = compile(expand('../extras/ext4_utils', ext4files), '-Ilibsparse/includ
 
 link('fastboot/fastboot', libsparse + libzip + liblog + libutil + libcutils + libbase + libext4 + libfastboot + libadbsh + libadbd, '-lpthread -lselinux -lz -lcrypto -lutil')
 
+simg2imgfiles = %w(
+  simg2img.c
+)
+libsimg2img = compile(expand('libsparse', simg2imgfiles), '-Iinclude -Ilibsparse/include')
+link('libsparse/simg2img', libsparse + libsimg2img, '-lz')
+
+img2simgfiles = %w(
+  img2simg.c
+)
+libimg2simg = compile(expand('libsparse', img2simgfiles), '-Iinclude -Ilibsparse/include')
+link('libsparse/img2simg', libsparse + libimg2simg, '-lz')
