@@ -9,7 +9,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
@@ -38,7 +38,7 @@ BuildRequires: libselinux-devel
 BuildRequires: f2fs-tools-devel
 BuildRequires: gtest-devel
 BuildRequires: systemd
-BuildRequires: ruby
+BuildRequires: ruby rubypick rubygems
 
 Provides:      adb
 Provides:      fastboot
@@ -100,6 +100,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Sun Apr 08 2016 Bastien Nocera <hadess@hadess.net> - 20160327git3761365735de-2
+- Add missing BuildRequires for Ruby script to run
+
 * Sun Mar 27 2016 Ivan Afonichev <ivan.afonichev@gmail.com> - 20160327git3761365735de-1
 - Update to upstream git commit 3761365735de
 
