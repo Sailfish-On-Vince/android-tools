@@ -9,7 +9,7 @@
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       2%{?dist}
+Release:       3%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
@@ -102,6 +102,9 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 20160327git3761365735de-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Sun Apr 08 2016 Bastien Nocera <hadess@hadess.net> - 20160327git3761365735de-2
 - Add missing BuildRequires for Ruby script to run
 - Compile and build img2simg and simg2img
