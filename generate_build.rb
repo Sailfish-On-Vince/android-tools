@@ -39,21 +39,13 @@ def link(output, objects, ldflags)
   puts "g++ -o #{output} #{ldflags} $LDFLAGS #{objects.join(' ')}"
 end
 
-minicryptfiles = %w(
-  dsa_sig.c
-  p256_ec.c
-  rsa.c
-  sha.c
-  p256.c
-  p256_ecdsa.c
-  sha256.c
-)
-libminicrypt = compile(expand('libmincrypt', minicryptfiles), '-Iinclude')
-
 adbdfiles = %w(
+  client/usb_dispatch.cpp
+  client/usb_libusb.cpp
+  client/usb_linux.cpp
   adb.cpp
-  adb_auth.cpp
   adb_io.cpp
+  socket_spec.cpp
   adb_listeners.cpp
   adb_utils.cpp
   sockets.cpp
@@ -62,13 +54,11 @@ adbdfiles = %w(
   transport_usb.cpp
   services.cpp
   adb_trace.cpp
-  get_my_path_linux.cpp
-  usb_linux.cpp
   diagnose_usb.cpp
   adb_auth_host.cpp
   sysdeps_unix.cpp
 )
-libadbd = compile(expand('adb', adbdfiles), '-DADB_REVISION=\"$PKGVER\" -DADB_HOST=1 -fpermissive -Iinclude -Ibase/include')
+libadbd = compile(expand('adb', adbdfiles), '-DADB_REVISION=\"$PKGVER\" -DADB_HOST=1 -fpermissive -I../boringssl/include -Iadb -Iinclude -Ibase/include -Ilibcrypto_utils/include')
 
 adbshfiles = %w(
   fdevent.cpp
@@ -79,13 +69,16 @@ libadbsh = compile(expand('adb', adbshfiles), '-DADB_REVISION=\"$PKGVER\" -DADB_
 
 adbfiles = %w(
   console.cpp
+  bugreport.cpp
   commandline.cpp
   adb_client.cpp
+  sysdeps/errno.cpp
   file_sync_client.cpp
   line_printer.cpp
+  transport_mdns.cpp
   client/main.cpp
 )
-libadb = compile(expand('adb', adbfiles), '-DADB_REVISION=\"$PKGVER\" -D_GNU_SOURCE -DADB_HOST=1 -D_Nonnull= -D_Nullable= -fpermissive -Iadb -Iinclude -Ibase/include')
+libadb = compile(expand('adb', adbfiles), '-DADB_REVISION=\"$PKGVER\" -D_GNU_SOURCE -DADB_HOST=1 -D_Nonnull= -D_Nullable= -fpermissive -Iadb -I../mdnsresponder/mDNSShared -Iinclude -Ibase/include')
 
 basefiles = %w(
   file.cpp
@@ -99,6 +92,10 @@ libbase = compile(expand('base', basefiles), '-DADB_HOST=1 -D_GNU_SOURCE -Ibase/
 
 logfiles = %w(
   logger_write.c
+  local_logger.c
+  config_read.c
+  logprint.c
+  stderr_write.c
   config_write.c
   logger_lock.c
   logger_name.c
@@ -114,17 +111,37 @@ cutilsfiles = %w(
   socket_inaddr_any_server_unix.c
   socket_local_client_unix.c
   socket_local_server_unix.c
-  socket_loopback_client_unix.c
   socket_loopback_server_unix.c
   socket_network_client_unix.c
   threads.c
   sockets.cpp
+  android_get_control_file.cpp
   sockets_unix.cpp
 )
 libcutils = compile(expand('libcutils', cutilsfiles), '-D_GNU_SOURCE -Iinclude')
 
-link('adb/adb', libbase + liblog + libcutils + libadbd + libadbsh + libadb, '-lrt -ldl -lpthread -lcrypto -lutil')
+cryptofiles = %w(
+  android_pubkey.c
+)
+libcryptoutils = compile(expand('libcrypto_utils', cryptofiles), '-Ilibcrypto_utils/include -I../boringssl/include -Iinclude')
 
+boringcryptofiles = %w(
+  bn/cmp.c
+  bn/bn.c
+  bytestring/cbb.c
+  bio/file.c
+  bn/convert.c
+  base64/base64.c
+)
+boringcrypto = compile(expand('../boringssl/src/crypto', boringcryptofiles), '-I../boringssl/include -Iinclude')
+
+mdnsfiles = %w(
+  mDNSShared/dnssd_ipc.c
+  mDNSShared/dnssd_clientstub.c
+)
+mdns = compile(expand('../mdnsresponder', mdnsfiles), '-D_GNU_SOURCE -DHAVE_IPV6 -DHAVE_LINUX -DNOT_HAVE_SA_LEN -DUSES_NETLINK -UMDNS_DEBUGMSGS -DMDNS_DEBUGMSGS=0 -I../mdnsresponder/mDNSShared -I../mdnsresponder/mDNSCore -Iinclude')
+
+link('adb/adb', libbase + liblog + libcutils + boringcrypto + libcryptoutils + libadbd + libadbsh + mdns + libadb, '-lrt -ldl -lpthread -lcrypto -lutil -lusb-1.0')
 
 fastbootfiles = %w(
   socket.cpp
@@ -137,9 +154,8 @@ fastbootfiles = %w(
   util.cpp
   fs.cpp
   usb_linux.cpp
-  util_linux.cpp
 )
-libfastboot = compile(expand('fastboot', fastbootfiles), '-DFASTBOOT_REVISION=\"$PKGVER\" -D_GNU_SOURCE -Iadb -Iinclude -Imkbootimg -Ibase/include -Ilibsparse/include -I../extras/ext4_utils -I../extras/f2fs_utils')
+libfastboot = compile(expand('fastboot', fastbootfiles), '-DFASTBOOT_REVISION=\"$PKGVER\" -D_GNU_SOURCE -Iadb -Iinclude -Imkbootimg -Ibase/include -Ilibsparse/include -I../extras/ext4_utils/include -I../extras/f2fs_utils')
 
 sparsefiles = %w(
   backed_block.c
@@ -174,9 +190,9 @@ ext4files = %w(
   crc16.c
   ext4_sb.c
 )
-libext4 = compile(expand('../extras/ext4_utils', ext4files), '-Ilibsparse/include -Iinclude')
+libext4 = compile(expand('../extras/ext4_utils', ext4files), '-Ilibsparse/include -Iinclude -I../extras/ext4_utils/include')
 
-link('fastboot/fastboot', libsparse + libzip + liblog + libutil + libcutils + libbase + libext4 + libfastboot + libadbsh + libadbd, '-lpthread -lselinux -lz -lcrypto -lutil')
+link('fastboot/fastboot', libsparse + libzip + liblog + libutil + libcutils + boringcrypto + libcryptoutils + libbase + libext4 + libfastboot + libadbsh + libadbd, '-lpthread -lselinux -lz -lcrypto -lutil -lusb-1.0')
 
 simg2imgfiles = %w(
   simg2img.c

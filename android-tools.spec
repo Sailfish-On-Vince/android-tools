@@ -1,15 +1,20 @@
-%global date 20160327
-%global git_commit 3761365735de
+%global date 20170311
+%global git_commit e7195be7725a
 
 %global packdname core-%{git_commit}
-%global extras_git_commit 7f5999a
+%global extras_git_commit 61f6603
 %global extras_packdname extras-%{extras_git_commit}
+%global boring_git_commit 7d422bc
+%global boring_packdname boringssl-%{boring_git_commit}
+%global mdns_git_commit ca0cba5
+%global mdns_packdname mdnsresponder-%{mdns_git_commit}
+
 
 %global _hardened_build 1
 
 Name:          android-tools
 Version:       %{date}git%{git_commit}
-Release:       3%{?dist}
+Release:       1%{?dist}
 Summary:       Android platform tools(adb, fastboot)
 
 Group:         Applications/System
@@ -18,17 +23,28 @@ License:       ASL 2.0 and (ASL 2.0 and BSD)
 URL:           http://developer.android.com/guide/developing/tools/
 
 #  using git archive since upstream hasn't created tarballs. 
-#  git archive --format=tar --prefix=%%{packdname}/ %%{git_commit} adb fastboot libzipfile libcutils libmincrypt libsparse mkbootimg include/cutils include/zipfile include/mincrypt include/utils include/private | xz  > %%{packdname}.tar.xz
+#  git archive --format=tar --prefix=%%{packdname}/ %%{git_commit} adb base fastboot libcrypto_utils libcutils liblog libsparse libutils libziparchive mkbootimg include | xz  > %%{packdname}.tar.xz
 #  https://android.googlesource.com/platform/system/core.git
 #  git archive --format=tar --prefix=extras/ %%{extras_git_commit} ext4_utils f2fs_utils | xz  > %%{extras_packdname}.tar.xz
 #  https://android.googlesource.com/platform/system/extras.git
+#  git archive --format=tar --prefix=boringssl/ %%{boring_git_commit} src/crypto include src/include | xz  > %%{boring_packdname}.tar.xz
+#  https://android.googlesource.com/platform/external/boringssl
+#  git archive --format=tar --prefix=mdnsresponder/ %%{mdns_git_commit} mDNSShared | xz  > %%{mdns_packdname}.tar.xz
+#  https://android.googlesource.com/platform/external/mdnsresponder
+
+
 
 Source0:       %{packdname}.tar.xz
 Source1:       %{extras_packdname}.tar.xz
 Source2:       generate_build.rb
+Source3:       %{boring_packdname}.tar.xz
+Source4:       %{mdns_packdname}.tar.xz
 Source5:       51-android.rules
 Source6:       adb.service
 Patch1:        0001-Add-string-h.patch
+Patch2:        0002-libusb-modifications.patch
+Patch3:        0003-atomic-fix.patch
+
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
@@ -37,6 +53,7 @@ BuildRequires: openssl-devel
 BuildRequires: libselinux-devel
 BuildRequires: f2fs-tools-devel
 BuildRequires: gtest-devel
+BuildRequires: libusbx-devel
 BuildRequires: systemd
 BuildRequires: ruby rubypick rubygems
 
@@ -65,8 +82,13 @@ setup between the host and the target phone as adb.
 
 %prep
 %setup -q -b 1 -n extras
+%setup -q -b 3 -n boringssl
+%setup -q -b 4 -n mdnsresponder
 %setup -q -b 0 -n %{packdname}
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
+
 cp -p %{SOURCE5} 51-android.rules
 
 %build
@@ -102,6 +124,10 @@ install -p -D -m 0644 %{SOURCE6} \
 
 
 %changelog
+* Sat Mar 11 2017 Ivan Afonichev <ivan.afonichev@gmail.com> - 20170311gite7195be7725a-1
+- Update to upstream git commit e7195be7725a
+- Resolves: rhbz 1323632 1423219 Add optflags. Support new versions.
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 20160327git3761365735de-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
