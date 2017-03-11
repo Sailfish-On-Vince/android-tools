@@ -60,6 +60,14 @@ BuildRequires: ruby rubypick rubygems
 Provides:      adb
 Provides:      fastboot
 
+# Bundled boringssl doesn't support the big endian architectures rhbz 1431379
+ExcludeArch: ppc ppc64
+
+# Bundled bits
+Provides: bundled(mdnsresponder)
+# This is a fork of openssl.
+Provides: bundled(boringssl)
+
 %description
 
 The Android Debug Bridge (ADB) is used to:
