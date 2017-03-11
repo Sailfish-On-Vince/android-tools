@@ -129,6 +129,8 @@ boringcryptofiles = %w(
   bn/cmp.c
   bn/bn.c
   bytestring/cbb.c
+  mem.c
+  buf/buf.c
   bio/file.c
   bn/convert.c
   base64/base64.c
