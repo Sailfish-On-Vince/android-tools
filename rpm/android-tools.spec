@@ -96,8 +96,7 @@ setup between the host and the target phone as adb.
 cp -p %{SOURCE5} 51-android.rules
 
 %build
-ruby %{SOURCE2} | tee build.sh
-PKGVER=%{git_commit} CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" sh -xe build.sh
+PKGVER=%{git_commit} CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" sh -xe rpm/build.sh
 
 %install
 install -d -m 0755 ${RPM_BUILD_ROOT}%{_bindir}
