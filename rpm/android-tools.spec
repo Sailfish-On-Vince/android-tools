@@ -77,10 +77,7 @@ to read and write the flash partitions. It needs the same USB device
 setup between the host and the target phone as adb.
 
 %prep
-%setup -q -b 1 -n extras
-%setup -q -b 3 -n boringssl
-%setup -q -b 4 -n mdnsresponder
-%setup -q -b 0 -n %{packdname}
+%setup
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
