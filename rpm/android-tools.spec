@@ -33,9 +33,6 @@ URL:           http://developer.android.com/guide/developing/tools/
 #  https://android.googlesource.com/platform/external/mdnsresponder
 
 
-Source0:       build.sh
-Source1:       51-android.rules
-Source2:       adb.service
 Patch1:        0001-Add-string-h.patch
 Patch2:        0002-libusb-modifications.patch
 Patch3:        0003-atomic-fix.patch
