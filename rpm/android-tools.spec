@@ -50,12 +50,8 @@ Requires(preun): systemd
 Requires(postun): systemd
 BuildRequires: zlib-devel
 BuildRequires: openssl-devel
-BuildRequires: libselinux-devel
-BuildRequires: f2fs-tools-devel
 BuildRequires: gtest-devel
-BuildRequires: libusbx-devel
 BuildRequires: systemd
-BuildRequires: ruby rubypick rubygems
 
 Provides:      adb
 Provides:      fastboot
