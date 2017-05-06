@@ -32,7 +32,7 @@ URL:           http://developer.android.com/guide/developing/tools/
 #  git archive --format=tar --prefix=mdnsresponder/ %%{mdns_git_commit} mDNSShared | xz  > %%{mdns_packdname}.tar.xz
 #  https://android.googlesource.com/platform/external/mdnsresponder
 
-
+Source0:	%{name}-%{version}.tar.bz2
 Patch1:        0001-Add-string-h.patch
 Patch2:        0002-libusb-modifications.patch
 Patch3:        0003-atomic-fix.patch
