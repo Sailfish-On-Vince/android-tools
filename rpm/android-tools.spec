@@ -33,14 +33,9 @@ URL:           http://developer.android.com/guide/developing/tools/
 #  https://android.googlesource.com/platform/external/mdnsresponder
 
 
-
-Source0:       %{packdname}.tar.xz
-Source1:       %{extras_packdname}.tar.xz
-Source2:       generate_build.rb
-Source3:       %{boring_packdname}.tar.xz
-Source4:       %{mdns_packdname}.tar.xz
-Source5:       51-android.rules
-Source6:       adb.service
+Source0:       build.sh
+Source1:       51-android.rules
+Source2:       adb.service
 Patch1:        0001-Add-string-h.patch
 Patch2:        0002-libusb-modifications.patch
 Patch3:        0003-atomic-fix.patch
@@ -96,7 +91,7 @@ setup between the host and the target phone as adb.
 cp -p %{SOURCE5} 51-android.rules
 
 %build
-PKGVER=%{git_commit} CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" sh -xe rpm/build.sh
+PKGVER=%{git_commit} CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" sh -xe build.sh
 
 %install
 install -d -m 0755 ${RPM_BUILD_ROOT}%{_bindir}
