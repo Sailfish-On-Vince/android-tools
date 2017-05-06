@@ -1,0 +1,12 @@
+[submodule "core"]
+	path = core
+	url = https://android.googlesource.com/platform/system/core.git
+[submodule "extras"]
+	path = extras
+	url = https://android.googlesource.com/platform/system/extras.git
+[submodule "mdnsresponder"]
+	path = mdnsresponder
+	url = https://android.googlesource.com/platform/external/mdnsresponder
+[submodule "boringssl"]
+	path = boringssl
+	url = https://android.googlesource.com/platform/external/boringssl
