@@ -32,7 +32,9 @@ URL:           http://developer.android.com/guide/developing/tools/
 #  git archive --format=tar --prefix=mdnsresponder/ %%{mdns_git_commit} mDNSShared | xz  > %%{mdns_packdname}.tar.xz
 #  https://android.googlesource.com/platform/external/mdnsresponder
 
-Source0:	%{name}-%{version}.tar.bz2
+Source0:       %{name}-%{version}.tar.bz2
+Source1:       51-android-tools.rules
+Source2:       adb.service
 Patch1:        0001-Add-string-h.patch
 Patch2:        0002-libusb-modifications.patch
 Patch3:        0003-atomic-fix.patch
@@ -83,7 +85,7 @@ cd core
 %patch2 -p1
 %patch3 -p1
 
-cp -p %{SOURCE5} 51-android.rules
+cp -p %{SOURCE1} 51-android.rules
 
 %build
 cd core
@@ -93,7 +95,7 @@ PKGVER=%{git_commit} CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" sh -xe ../build
 install -d -m 0755 ${RPM_BUILD_ROOT}%{_bindir}
 install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 install -m 0755 -t ${RPM_BUILD_ROOT}%{_bindir} adb/adb fastboot/fastboot libsparse/simg2img libsparse/img2simg
-install -p -D -m 0644 %{SOURCE6} \
+install -p -D -m 0644 %{SOURCE2} \
     %{buildroot}%{_unitdir}/adb.service
 
 %post
