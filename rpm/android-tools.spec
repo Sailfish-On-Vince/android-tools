@@ -78,6 +78,7 @@ setup between the host and the target phone as adb.
 
 %prep
 %setup
+cd core
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -85,7 +86,8 @@ setup between the host and the target phone as adb.
 cp -p %{SOURCE5} 51-android.rules
 
 %build
-PKGVER=%{git_commit} CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" sh -xe build.sh
+cd core
+PKGVER=%{git_commit} CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" sh -xe ../build.sh
 
 %install
 install -d -m 0755 ${RPM_BUILD_ROOT}%{_bindir}
