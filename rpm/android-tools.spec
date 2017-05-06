@@ -43,6 +43,7 @@ Requires(postun): systemd
 BuildRequires: zlib-devel
 BuildRequires: openssl-devel
 BuildRequires: gtest-devel
+BuildRequires: libusb1-devel
 BuildRequires: systemd
 
 Provides:      adb
