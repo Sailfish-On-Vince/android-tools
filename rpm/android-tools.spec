@@ -83,7 +83,7 @@ cd core
 %patch2 -p1
 %patch3 -p1
 
-cp -p ../rpm/51-android.rules 51-android.rules
+cp -p ../51-android.rules 51-android.rules
 
 %build
 cd core
@@ -93,7 +93,7 @@ PKGVER=%{git_commit} CXXFLAGS="%{optflags}" CFLAGS="%{optflags}" sh -xe ../build
 install -d -m 0755 ${RPM_BUILD_ROOT}%{_bindir}
 install -d -m 0775 ${RPM_BUILD_ROOT}%{_sharedstatedir}/adb
 install -m 0755 -t ${RPM_BUILD_ROOT}%{_bindir} adb/adb fastboot/fastboot libsparse/simg2img libsparse/img2simg
-install -p -D -m 0644 ../rpm/adb.service \
+install -p -D -m 0644 ../adb.service \
     %{buildroot}%{_unitdir}/adb.service
 
 %post
