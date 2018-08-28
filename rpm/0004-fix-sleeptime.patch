@@ -1,0 +1,13 @@
+diff --git a/adb/client/usb_libusb.cpp b/adb/client/usb_libusb.cpp
+index 7adb26213..9ec384387 100644
+--- a/adb/client/usb_libusb.cpp
++++ b/adb/client/usb_libusb.cpp
+@@ -349,7 +349,7 @@ static void poll_for_devices() {
+         }
+         libusb_free_device_list(list, 1);
+
+-        std::this_thread::sleep_for(500ms);
++        std::this_thread::sleep_for(500);
+     }
+ }
+

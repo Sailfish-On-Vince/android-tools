@@ -36,6 +36,7 @@ Source0:       %{name}-%{version}.tar.bz2
 Patch1:        0001-Add-string-h.patch
 Patch2:        0002-libusb-modifications.patch
 Patch3:        0003-atomic-fix.patch
+Patch4:	       0004-fix-sleeptime.patch
 
 Requires(post): systemd
 Requires(preun): systemd
@@ -83,6 +84,7 @@ cd core
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 cp -p ../51-android.rules 51-android.rules
 
